@@ -10,7 +10,7 @@ This project is the runnable example for the [Infobip Shift 2026 workshop append
 - An AWS account with access to Amazon Bedrock
 - An Infobip account and an API key with the `messages-api:manage` scope
 - A phone number verified with the Infobip platform (typically, this is done as part of the account onboarding process) 
-- A mobile device with Viber on that verified number (not needed if you use the SMS fallback)
+- Viber installed on the same verified mobile device (not needed if you use the SMS fallback)
 - The sender value provided for the workshop
 
 ## Configure the application
