@@ -1,0 +1,19 @@
+spring:
+  ai:
+    bedrock:
+      aws:
+        region: test-region
+        access-key: test-access-key
+        secret-key: test-secret-key
+      converse:
+        chat:
+          model: test-model
+
+infobip:
+  api-key: test-infobip-api-key
+  message:
+    default-sender: TestSender
+
+logging:
+  level:
+    io.modelcontextprotocol: DEBUG

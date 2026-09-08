@@ -1,0 +1,30 @@
+spring:
+  application:
+    name: travel-agent
+  ai:
+    bedrock:
+      aws:
+        region: ${AWS_REGION}
+        access-key: ${AWS_ACCESS_KEY}
+        secret-key: ${AWS_SECRET_KEY}
+      converse:
+        chat:
+          model: ${AWS_MODEL_ID}
+    mcp:
+      client:
+        toolcallback:
+          enabled: true
+        streamable-http:
+          connections:
+            message:
+              url: https://mcp.infobip.com
+              endpoint: /message
+
+logging:
+  level:
+    org.springframework.ai: DEBUG
+
+infobip:
+  api-key: ${INFOBIP_API_KEY}
+  message:
+    default-sender: ${INFOBIP_MESSAGE_DEFAULT_SENDER}
