@@ -109,7 +109,7 @@ class TravelAgentSendFlowIntegrationTest extends TestBase {
                 .expectBody(String.class)
                 .returnResult();
 
-        assertThat(itineraryResult.getResponseBody()).isNotBlank();
+        assertThat(itineraryResult.getResponseBody()).contains("Zadar");
         var conversationId = itineraryResult.getResponseHeaders().getFirst(CONVERSATION_ID_HEADER);
         assertThat(conversationId).isNotBlank();
 

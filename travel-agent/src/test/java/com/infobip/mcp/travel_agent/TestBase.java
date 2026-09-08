@@ -85,7 +85,7 @@ public abstract class TestBase {
                             "tools": [
                               {
                                 "name": "%s",
-                                "description": "Send an SMS message to a phone number.",
+                                "description": "Send a message to a phone number over Viber or SMS.",
                                 "inputSchema": {
                                   "type": "object",
                                   "properties": {
