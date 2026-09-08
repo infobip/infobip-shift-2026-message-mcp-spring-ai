@@ -206,6 +206,9 @@ public TravelAgent(
 
 The prompt is deliberately short and scoped: it restricts the `send` tool to agent-authored summaries (never user-dictated text), caps sends per itinerary, and declines anything outside trip planning and messaging - while staying short enough to read and reason about during the workshop. The channel guidance leans into Viber's strengths: it asks for an engaging, motivating message but still sets a clear length budget so the itinerary stays readable. To send over SMS instead, swap this last instruction for the SMS variant in [Appendix B: Use SMS as a fallback channel](#appendix-b-use-sms-as-a-fallback-channel).
 
+> [!NOTE]
+> This is workshop example code, not a production service. The guardrails above are enforced only by the system prompt, not in code, so a determined prompt could work around them. Add input validation, authorization, and output checks outside local development.
+
 ### Wire tools into the agent
 
 Spring AI exposes the tools from the configured MCP connection through a `ToolCallbackProvider`. `TravelAgent` also sets up per-conversation memory with `MessageWindowChatMemory`, partitioned by the `X-Conversation-Id` the controller passes through. The MCP-specific addition is `.defaultTools(tools)`:

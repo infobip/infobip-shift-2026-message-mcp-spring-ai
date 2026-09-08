@@ -1,18 +1,25 @@
 package com.infobip.mcp.travel_agent;
 
-import org.jspecify.annotations.Nullable;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.memory.MessageWindowChatMemory;
+import org.springframework.ai.chat.messages.AbstractMessage;
+import org.springframework.ai.chat.model.ChatResponse;
+import org.springframework.ai.chat.model.Generation;
 import org.springframework.ai.tool.ToolCallbackProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import java.util.Optional;
 
 @Component
 public class TravelAgent {
 
     private static final int MAX_MEMORY_MESSAGES = 20;
+
+    private static final String EMPTY_RESPONSE_FALLBACK =
+            "Sorry, I couldn't put a response together. Please try again.";
 
     private final ChatClient chatClient;
 
@@ -57,13 +64,18 @@ public class TravelAgent {
                 .build();
     }
 
-    public @Nullable String chat(String prompt, String conversationId) {
+    public String chat(String prompt, String conversationId) {
         var chatResponse = chatClient.prompt()
                 .user(prompt)
                 .advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
                 .call()
                 .chatResponse();
 
-        return chatResponse != null ? chatResponse.getResult().getOutput().getText() : null;
+        return Optional.ofNullable(chatResponse)
+                .map(ChatResponse::getResult)
+                .map(Generation::getOutput)
+                .map(AbstractMessage::getText)
+                .filter(text -> !text.isBlank())
+                .orElse(EMPTY_RESPONSE_FALLBACK);
     }
 }
