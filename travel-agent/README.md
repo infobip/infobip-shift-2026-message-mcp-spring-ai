@@ -1,6 +1,6 @@
 # Travel Agent
 
-A Spring Boot application that uses Spring AI and Amazon Bedrock to plan conference business trips. It connects to the Infobip Message MCP server so the agent can send an itinerary by SMS.
+A Spring Boot application that uses Spring AI and Amazon Bedrock to plan conference business trips. It connects to the Infobip Message MCP server so the agent can send an itinerary by Viber, with SMS available as a fallback channel.
 
 This project is the runnable example for the [Infobip Shift 2026 workshop appendix](../README.md), the MCP segment of the joint AWS and Infobip workshop.
 
@@ -10,6 +10,7 @@ This project is the runnable example for the [Infobip Shift 2026 workshop append
 - An AWS account with access to Amazon Bedrock
 - An Infobip account and an API key with the `messages-api:manage` scope
 - A verified destination phone number
+- A mobile device with Viber on that verified number (not needed if you use the SMS fallback)
 - The sender value provided for the workshop
 
 ## Configure the application
