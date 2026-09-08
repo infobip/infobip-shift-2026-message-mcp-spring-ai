@@ -258,7 +258,7 @@ If the first send does not work, the cause is usually one of these:
 
 ## What you built
 
-You connected a Spring AI agent to the Infobip Message MCP server, authenticated the connection with an API key, and exposed the MCP tools to the model through Spring AI. The model can now turn a natural-language request into a real message delivered through Infobip's omnichannel platform.
+You connected a Spring AI agent to the Infobip Message MCP server, authenticated the connection with an API key, and exposed the MCP tools to the model through Spring AI. The model can now turn a natural-language request into a real message delivered through Infobip omnichannel platform.
 
 ## Additional resources
 
