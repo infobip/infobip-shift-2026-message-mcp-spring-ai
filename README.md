@@ -1,12 +1,16 @@
-# Infobip Shift 2026: Sending Travel Itineraries by SMS with Message MCP and Spring AI
+# Infobip Shift 2026: Send Travel Itineraries by SMS with Message MCP and Spring AI
 
-This is the Model Context Protocol (MCP) segment appendix to the joint AWS and Infobip workshop at Infobip Shift 2026, **Building Java AI Agents With Spring AI and Amazon Bedrock AgentCore**. By this point, you already have a Spring AI agent with a chat endpoint, chat memory, RAG, web browsing and an interactive UI. In this section, you connect the agent to the [Infobip Message MCP server](https://github.com/infobip/mcp) and enable it to send SMS messages.
+This is the Model Context Protocol (MCP) segment appendix to the joint AWS and Infobip workshop at [Infobip Shift 2026](https://shift.infobip.com/), **Building Java AI Agents With Spring AI and Amazon Bedrock AgentCore**.
 
-Our example is a **Travel Agent**. It creates a conference itinerary and, when asked, sends the itinerary to your verified phone number. The agent handles the planning, then calls the Message MCP `send` tool to deliver the message through Infobip, without additional messaging integration code.
+By this point, you already have a Spring AI agent with a chat endpoint, chat memory, RAG, web browsing, and an interactive UI. In this section, you'll connect the agent to the [Infobip Message MCP server](https://github.com/infobip/mcp) and enable it to send SMS messages.
 
-## What is Message MCP
+## Scenario overview
 
-[Infobip MCP servers](https://www.infobip.com/docs/mcp) allow AI agents to interact with the Infobip platform through the [Model Context Protocol](https://modelcontextprotocol.io/docs). Depending on the server, an agent can send messages, provision senders, and access delivery information such as delivery reports, logs, and metrics.
+Our example is a **Travel Agent**. It creates a conference itinerary and, when asked, sends the itinerary to your phone number verified with the Infobip platform. The agent handles the planning, then calls the Message MCP `send` tool to deliver the message without additional messaging integration code.
+
+## What is Infobip Message MCP
+
+[Infobip MCP servers](https://www.infobip.com/docs/mcp) allow AI agents to interact with the Infobip platform through the [Model Context Protocol](https://modelcontextprotocol.io/docs). Depending on the server, an agent can send messages, provision senders, and access delivery information, such as delivery reports, logs, and metrics.
 
 The **Message MCP server** focuses on simple, multi-channel messaging. It can send text, image, or file URL messages over SMS, RCS, MMS, and Viber in a single tool call. It exposes two tools:
 
@@ -19,16 +23,21 @@ With only two tools, Message MCP has a small token footprint and is a good fit f
 
 You need the following to complete this tutorial:
 
-1. **An Infobip account.** You can [sign up for a free trial](https://www.infobip.com/signup). During onboarding:
+1. **An Infobip account.** You can [sign up for a free trial](https://www.infobip.com/signup).
+
+   During account onboarding:
+   
    - Select **SMS** as the channel you want to try first. You can choose another supported channel if you prefer.
    - Select **Transactions** as the message type because the agent sends a trip notification.
    - Select **By connecting with MCP** when asked how you plan to use the Infobip platform.
-   - After answering the onboarding questions, open the short guide in the **“Get started with channels”** panel.
-   - You do not need to configure a sender for this workshop. Use the sender value provided to you during the workshop; on a free trial, Infobip supplies a default test sender you can use. You set this value in `.env` as `INFOBIP_MESSAGE_DEFAULT_SENDER`. See [Appendix A: Full project](#appendix-a-full-project).
-2. **An Infobip [API key](https://www.infobip.com/docs/essentials/api-essentials/api-authentication#api-key-header)** or an OAuth 2.1 client. After successfully signing up, you can use the automatically created default API key, which has the required scope, or create a new API key. See [Connecting to the Infobip Message MCP Server](#connecting-to-the-infobip-message-mcp-server) for details.
-3. **A verified destination phone number.** Trial accounts can send messages only to verified numbers. The number used during signup should already be verified.
+   - Once you answered onboarding questions, open the short guide in the **“Get started with channels”** panel.
+   - You do not need to configure a sender for this workshop. Use the sender value provided to you during the workshop; in a free trial, Infobip supplies a default test sender to use. You set this value in `.env` as `INFOBIP_MESSAGE_DEFAULT_SENDER`. See [Appendix A: Full project](#appendix-a-full-project).
 
-## Connecting to the Infobip Message MCP Server
+3. **An Infobip [API key](https://www.infobip.com/docs/essentials/api-essentials/api-authentication#api-key-header)** or an OAuth 2.1 client. After successfully signing up, you can use the automatically created default API key, which has the required scope, or create a new API key. See [Connecting to the Infobip Message MCP Server](#connecting-to-the-infobip-message-mcp-server) for details.
+
+4. **A verified destination phone number.** Trial accounts can send messages only to verified numbers. The number used during signup is already verified.
+
+## Connect to the Infobip Message MCP Server
 
 Infobip MCP servers support [Streamable HTTP transport](https://modelcontextprotocol.io/docs/learn/architecture#transport-layer), which is the transport used in this workshop.
 
@@ -40,7 +49,7 @@ https://mcp.infobip.com/message
 
 You can authenticate your MCP client with an API key or OAuth 2.1.
 
-### Using an API key
+### Use an API key (if using OAuth, skip this section)
 
 For this workshop, use an Infobip API key in the `Authorization` header with the `App` scheme:
 
@@ -56,13 +65,14 @@ You can discover the scopes required by an MCP server by inspecting its OAuth pr
 https://mcp.infobip.com/message/.well-known/oauth-protected-resource
 ```
 
-### Using OAuth 2.1 (Optional)
+### Use OAuth 2.1 (Optional)
+
+> [!IMPORTANT]
+> The runnable project uses API-key authentication. OAuth 2.1 is described here as an alternative but is not configured in this example.
 
 Infobip MCP servers also support OAuth 2.1. If your MCP client supports OAuth 2.1 and [authorization server discovery](https://modelcontextprotocol.io/specification/2025-11-25/basic/authorization#authorization-server-discovery), it can start the authorization flow automatically when it first connects. The resulting access token is limited to the granted scopes, providing a useful security guardrail.
 
-The runnable project uses API-key authentication. OAuth 2.1 is described here as an alternative but is not configured in this example.
-
-## Building the Travel Agent
+## Build the Travel Agent
 
 The complete example is in [`travel-agent/`](travel-agent). It is a standalone project focused on the MCP integration. In the full workshop application, apply the same changes to the agent you built in the previous steps.
 
@@ -77,7 +87,7 @@ The standalone example already includes the Bedrock starter. Add the Spring AI M
 </dependency>
 ```
 
-### Configuring the MCP connection
+### Configure the MCP connection
 
 Configure the MCP connection in `application.yaml`. Spring AI combines `url` and `endpoint` to connect to `https://mcp.infobip.com/message`:
 
@@ -114,7 +124,7 @@ logging:
 
 This level is useful for the local workshop, but debug logs may contain prompts, phone numbers, message content, and tool arguments. Disable it outside local development.
 
-### Adding API-key authentication
+### Add API-key authentication (skip if used OAuth)
 
 Spring AI provides `McpClientCustomizer` for customizing the MCP transport. The application uses it to add the Infobip API key to requests for the connection named `message`. The customizer reads the API key once and adds it only to the `message` connection.
 
@@ -152,11 +162,11 @@ public class MessageMcpApiKeyCustomizer
 
 The `App` authorization header is applied only to the Message MCP connection, so adding another MCP connection later does not automatically send the same API key to it.
 
-### Separating domain logic from the HTTP layer
+### Separate domain logic from the HTTP layer
 
 The runnable example keeps `ChatClient` configuration and the chat call itself out of the controller, in a separate `TravelAgent` service. The controller only handles HTTP concerns: reading/generating the `X-Conversation-Id` header and returning it in the response. This keeps the domain logic that matters for this workshop - the system prompt, memory, and tool wiring - readable on its own, separate from web-layer plumbing.
 
-### Providing the default sender to the agent
+### Provide the default sender to the agent
 
 The default sender is application-level context that the agent needs when constructing a `send` tool call. It is separate from the MCP connection and authentication settings, so inject it into the system prompt from `infobip.message.default-sender`:
 
@@ -192,7 +202,7 @@ public TravelAgent(
 
 The prompt is deliberately short and scoped: it restricts the `send` tool to agent-authored summaries (never user-dictated text), caps sends per itinerary, and declines anything outside trip planning and messaging - while staying short enough to read and reason about during the workshop.
 
-### Wiring the tools into the agent
+### Wire tools into the agent
 
 Spring AI exposes the tools from the configured MCP connection through a `ToolCallbackProvider`. `TravelAgent` also sets up per-conversation memory with `MessageWindowChatMemory`, partitioned by the `X-Conversation-Id` the controller passes through. The MCP-specific addition is `.defaultTools(tools)`:
 
@@ -220,7 +230,7 @@ You can run the standalone example with `curl`, or use the interactive UI from t
 
     > Send that itinerary to <YOUR_VERIFIED_NUMBER>.
 
-    Use the number in international format without a leading `+` (for example, `385911234567`). The agent should call the `send` tool with the itinerary and the verified phone number. It should confirm the result only after the tool call succeeds. With a free trial account, messages can be sent only to the verified phone number.
+    Use the number in international format without a leading `+` or `00`, like so: `385911234567`. The agent will call the `send` tool with the itinerary and the verified phone number. It will confirm the result only after the tool call succeeds.
 
     Because Spring AI debug logging is enabled, the application logs show the MCP tool call: look for the `send` tool name and its arguments (recipient, sender, and message text) under the `org.springframework.ai` logger. Once you see it, check your phone for the SMS.
 
@@ -235,7 +245,7 @@ You can run the standalone example with `curl`, or use the interactive UI from t
 If the first send does not work, the cause is usually one of these:
 
 - **401 / authentication error.** The API key or scheme is wrong. Confirm the header is `Authorization: App <YOUR_INFOBIP_API_KEY>` and that the key has the `messages-api:manage` scope.
-- **Tool call succeeds but no SMS arrives.** Trial accounts deliver only to the verified phone number. Confirm the recipient matches the number you verified during signup, and that it is in international format without a leading `+`.
+- **Tool call succeeds but no SMS arrives.** Trial accounts deliver only to the verified phone number. Confirm the recipient matches the number you verified during signup, and that it is in an accepted international format.
 - **Sender rejected.** Use the sender value from `INFOBIP_MESSAGE_DEFAULT_SENDER`. On a trial account you cannot send from an arbitrary sender.
 - **No tool call in the logs.** The agent answered without sending. Ask it explicitly to send the itinerary (the prompt only calls `send` on an explicit request), and confirm the MCP connection initialized in the startup logs.
 
