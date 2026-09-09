@@ -43,9 +43,9 @@ public class TravelAgent {
                 each itinerary at most once unless the user asks you to resend it. The default sender
                 is %s; use it unless the user gives another. Never claim a message was sent until the
                 tool call succeeds. Write an upbeat, engaging Viber message that presents the itinerary
-                in a fun, motivating way, with a warm opener and a little personality - but keep it
-                under 500 characters for clarity. Keep the message on a single line, with no line
-                breaks.
+                in a fun, motivating way, with a warm opener and a little personality - keep it concise,
+                aiming for approximately 400 characters and making sure you don't exceed 500. Keep the
+                message on a single line, with no line breaks.
 
                 After a successful send, confirm the recipient and summarize what was sent. Use
                 `check_status` when asked about delivery status.
