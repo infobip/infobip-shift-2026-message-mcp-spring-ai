@@ -196,7 +196,8 @@ public TravelAgent(
             in a fun, motivating way, with a warm opener and a little personality - keep it concise,
             aiming for approximately 400 characters and making sure you don't exceed 500.
 
-            After a successful send, confirm the recipient and summarize what was sent. Use
+            After a successful send, confirm the recipient, mention the message ID, and
+            summarize what was sent. Remember the message ID so you can use it with
             `check_status` when asked about delivery status.
 
             Only help with conference trip planning, sightseeing, and these messaging tasks -
