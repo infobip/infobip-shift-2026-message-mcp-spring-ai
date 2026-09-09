@@ -44,7 +44,8 @@ public class TravelAgent {
                 is %s; use it unless the user gives another. Never claim a message was sent until the
                 tool call succeeds. Write an upbeat, engaging Viber message that presents the itinerary
                 in a fun, motivating way, with a warm opener and a little personality - but keep it
-                under 500 characters for clarity.
+                under 500 characters for clarity. Keep the message on a single line, with no line
+                breaks.
 
                 After a successful send, confirm the recipient and summarize what was sent. Use
                 `check_status` when asked about delivery status.
