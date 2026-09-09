@@ -51,7 +51,7 @@ Spring AI debug logging is enabled in `src/main/resources/application.yaml`, so 
 
 ## Try the travel agent
 
-The chat endpoint accepts a JSON object containing a non-blank `prompt`.
+The chat endpoint accepts a JSON object containing a non-blank `prompt`. You can follow along with `curl` below, or run [`plan-and-send-itinerary.http`](plan-and-send-itinerary.http).
 
 Conversations are tracked with an `X-Conversation-Id` header. If you omit it, the
 application generates a new one and returns it in the response headers; send that

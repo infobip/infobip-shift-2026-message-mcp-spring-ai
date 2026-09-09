@@ -226,7 +226,7 @@ this.chatClient = chatClientBuilder
 
 ## Scenario
 
-You can run the standalone example with `curl`, or use the interactive UI from the full workshop application.
+You can run the standalone example with `curl`, the [`travel-agent/plan-and-send-itinerary.http`](travel-agent/plan-and-send-itinerary.http) file, or the interactive UI from the full workshop application.
 
 1. Ask the agent to create an itinerary:
 
