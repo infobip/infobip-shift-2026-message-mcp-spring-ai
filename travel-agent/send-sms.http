@@ -1,0 +1,23 @@
+# Send SMS through the WhatsApp/SMS MCP Agent
+# Requires the app running locally: ./mvnw spring-boot:run
+# Runnable directly from the IntelliJ HTTP Client (click the ▶ gutter icon).
+# Edit the variables below as needed.
+
+@host = http://localhost:8080
+@phone = +491xxxxxxx
+
+### Send an SMS (non-streaming)
+POST {{host}}/api/chat
+Content-Type: application/json
+
+{
+  "prompt": "Check my trip from Munich to Zadar 12-16.09.2026, for Zadar Shift conference for 4 days, no special preferences  and send itinerary an Viber to {{phone}}."
+}
+
+### Check delivery status (paste the messageId returned by a send above)
+POST {{host}}/api/chat
+Content-Type: application/json
+
+{
+  "prompt": "Check the delivery status of the message with messageId 000000000000000000000."
+}
