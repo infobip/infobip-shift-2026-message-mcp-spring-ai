@@ -32,7 +32,25 @@ class TravelAgentSendFlowIntegrationTest extends TestBase {
     private RestTestClient restTestClient;
 
     @BeforeEach
-    void stubBedrockAndMcpToolCall() {
+    void stubMcpToolCall() {
+        // MCP tools/call for the send tool. Scenario-agnostic (no Converse coupling), shared
+        // by every test that reaches an actual tool invocation.
+        WIRE_MOCK.stubFor(post(urlEqualTo(MCP_ENDPOINT))
+                .withRequestBody(matchingJsonPath("$.method", equalTo("tools/call")))
+                .willReturn(okJson("""
+                        {
+                          "jsonrpc": "2.0",
+                          "id": "{{jsonPath request.body '$.id'}}",
+                          "result": {
+                            "content": [ { "type": "text", "text": "Message sent to %s." } ],
+                            "isError": false
+                          }
+                        }
+                        """.formatted(TEST_DESTINATION))));
+    }
+
+    @Test
+    void plansAndSendsItineraryAcrossTwoTurns() {
         // Turn 1: plain itinerary text, no tool use.
         WIRE_MOCK.stubFor(post(urlPathMatching(CONVERSE_URL_PATTERN))
                 .inScenario("bedrock-conversation")
@@ -86,23 +104,6 @@ class TravelAgentSendFlowIntegrationTest extends TestBase {
                         """.formatted(TEST_DESTINATION)))
                 .willSetStateTo("done"));
 
-        // MCP tools/call for the send tool.
-        WIRE_MOCK.stubFor(post(urlEqualTo(MCP_ENDPOINT))
-                .withRequestBody(matchingJsonPath("$.method", equalTo("tools/call")))
-                .willReturn(okJson("""
-                        {
-                          "jsonrpc": "2.0",
-                          "id": "{{jsonPath request.body '$.id'}}",
-                          "result": {
-                            "content": [ { "type": "text", "text": "Message sent to %s." } ],
-                            "isError": false
-                          }
-                        }
-                        """.formatted(TEST_DESTINATION))));
-    }
-
-    @Test
-    void plansAndSendsItineraryAcrossTwoTurns() {
         var itineraryResult = postChat(
                         "Plan a two-day conference trip to Infobip Shift Zadar.", null)
                 .expectStatus().isOk()
@@ -126,6 +127,61 @@ class TravelAgentSendFlowIntegrationTest extends TestBase {
         WIRE_MOCK.verify(postRequestedFor(urlEqualTo(MCP_ENDPOINT))
                 .withRequestBody(matchingJsonPath("$.method", equalTo("tools/call")))
                 .withRequestBody(matchingJsonPath("$.params.name", equalTo(SEND_TOOL_NAME))));
+    }
+
+    @Test
+    void sendsItineraryWhenToolCallInputContainsNewlines() {
+        // Reproduces the malformed tool-call arguments NewlineSafeToolCallingManager fixes;
+        // without it, this fails with an "Illegal unquoted character" parse error.
+        var multilineText = "Day 1: Zadar arrival, old town.\nDay 2: Shift conference, waterfront evening.";
+
+        WIRE_MOCK.stubFor(post(urlPathMatching(CONVERSE_URL_PATTERN))
+                .inScenario("bedrock-newline-conversation")
+                .whenScenarioStateIs(Scenario.STARTED)
+                .willReturn(okJson("""
+                        {
+                          "output": { "message": { "role": "assistant", "content": [
+                            { "toolUse": {
+                                "toolUseId": "tooluse_test_newline",
+                                "name": "%s",
+                                "input": { "to": "%s", "text": "Day 1: Zadar arrival, old town.\\nDay 2: Shift conference, waterfront evening." }
+                              }
+                            }
+                          ] } },
+                          "stopReason": "tool_use",
+                          "usage": { "inputTokens": 40, "outputTokens": 25, "totalTokens": 65 },
+                          "metrics": { "latencyMs": 120 }
+                        }
+                        """.formatted(SEND_TOOL_NAME, TEST_DESTINATION)))
+                .willSetStateTo("newline-tool-use-requested"));
+
+        WIRE_MOCK.stubFor(post(urlPathMatching(CONVERSE_URL_PATTERN))
+                .inScenario("bedrock-newline-conversation")
+                .whenScenarioStateIs("newline-tool-use-requested")
+                .willReturn(okJson("""
+                        {
+                          "output": { "message": { "role": "assistant", "content": [
+                            { "text": "Sent! Your two-day Zadar itinerary was texted to %s." }
+                          ] } },
+                          "stopReason": "end_turn",
+                          "usage": { "inputTokens": 60, "outputTokens": 15, "totalTokens": 75 },
+                          "metrics": { "latencyMs": 90 }
+                        }
+                        """.formatted(TEST_DESTINATION)))
+                .willSetStateTo("newline-done"));
+
+        var sendResult = postChat(
+                        "Send that itinerary to " + TEST_DESTINATION + ".", null)
+                .expectStatus().isOk()
+                .expectBody(String.class)
+                .returnResult();
+
+        assertThat(sendResult.getResponseBody()).isNotBlank();
+
+        WIRE_MOCK.verify(postRequestedFor(urlEqualTo(MCP_ENDPOINT))
+                .withRequestBody(matchingJsonPath("$.method", equalTo("tools/call")))
+                .withRequestBody(matchingJsonPath("$.params.name", equalTo(SEND_TOOL_NAME)))
+                .withRequestBody(matchingJsonPath("$.params.arguments.text", equalTo(multilineText))));
     }
 
     private RestTestClient.ResponseSpec postChat(String prompt, String conversationId) {

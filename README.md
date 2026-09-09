@@ -194,10 +194,10 @@ public TravelAgent(
             is %s; use it unless the user gives another. Never claim a message was sent until the
             tool call succeeds. Write an upbeat, engaging Viber message that presents the itinerary
             in a fun, motivating way, with a warm opener and a little personality - keep it concise,
-            aiming for approximately 400 characters and making sure you don't exceed 500. Keep the
-            message on a single line, with no line breaks.
+            aiming for approximately 400 characters and making sure you don't exceed 500.
 
-            After a successful send, confirm the recipient and summarize what was sent. Use
+            After a successful send, confirm the recipient, mention the message ID, and
+            summarize what was sent. Remember the message ID so you can use it with
             `check_status` when asked about delivery status.
 
             Only help with conference trip planning, sightseeing, and these messaging tasks -
@@ -205,7 +205,7 @@ public TravelAgent(
             """.formatted(defaultSender);
 ```
 
-The prompt is deliberately short and scoped: it restricts the `send` tool to agent-authored summaries (never user-dictated text), caps sends per itinerary, and declines anything outside trip planning and messaging while staying short enough to read and reason about during the workshop. The closing instruction asks for an engaging, motivating message with a warm opener, targeting a soft length budget (aim for ~400 characters, don't exceed 500) on a single line with no line breaks, so the itinerary stays readable. To send over SMS instead, swap this last instruction for the SMS variant in [Appendix B: Use SMS as a fallback channel](#appendix-b-use-sms-as-a-fallback-channel).
+The prompt is deliberately short and scoped: it restricts the `send` tool to agent-authored summaries (never user-dictated text), caps sends per itinerary, and declines anything outside trip planning and messaging while staying short enough to read and reason about during the workshop. The closing instruction asks for an engaging, motivating message with a warm opener, targeting a soft length budget (aim for ~400 characters, don't exceed 500), so the itinerary stays readable. To send over SMS instead, swap this last instruction for the SMS variant in [Appendix B: Use SMS as a fallback channel](#appendix-b-use-sms-as-a-fallback-channel).
 
 > [!NOTE]
 > This is workshop example code, not a production service. The guardrails above are enforced only by the system prompt, not in code, so a determined prompt could work around them. Add input validation, authorization, and output checks outside local development.
@@ -226,7 +226,7 @@ this.chatClient = chatClientBuilder
 
 ## Scenario
 
-You can run the standalone example with `curl`, or use the interactive UI from the full workshop application.
+You can run the standalone example with `curl`, the [`travel-agent/plan-and-send-itinerary.http`](travel-agent/plan-and-send-itinerary.http) file, or the interactive UI from the full workshop application.
 
 1. Ask the agent to create an itinerary:
 

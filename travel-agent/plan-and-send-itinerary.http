@@ -1,0 +1,26 @@
+# Send a trip itinerary via the Travel Agent (Message MCP)
+# Requires the app running locally: ./mvnw spring-boot:run
+# Runnable directly from the IntelliJ HTTP Client (click the ▶ gutter icon).
+# Edit the variables below as needed.
+
+@host = http://localhost:8080
+@phone = <YOUR_VERIFIED_NUMBER>
+@conversationId = travel-agent-manual-test
+
+### Send an itinerary over Viber
+POST {{host}}/api/chat
+Content-Type: application/json
+X-Conversation-Id: {{conversationId}}
+
+{
+  "prompt": "Plan my trip from Munich to Zadar for the Infobip Shift conference, 12-16 September 2026, 4 days, no special preferences. Then send the itinerary via Viber to {{phone}}."
+}
+
+### Check delivery status (same conversation, so the agent recalls the messageId from the send above)
+POST {{host}}/api/chat
+Content-Type: application/json
+X-Conversation-Id: {{conversationId}}
+
+{
+  "prompt": "Was that itinerary delivered?"
+}
