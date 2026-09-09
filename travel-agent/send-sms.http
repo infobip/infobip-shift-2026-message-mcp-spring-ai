@@ -4,7 +4,7 @@
 # Edit the variables below as needed.
 
 @host = http://localhost:8080
-@phone = +4915158101407
+@phone = +491xxxxxxx
 
 ### Send an SMS (non-streaming)
 POST {{host}}/api/chat
