@@ -238,7 +238,7 @@ You can run the standalone example with `curl`, the [`travel-agent/plan-and-send
 
     > Send that itinerary to <YOUR_VERIFIED_NUMBER>.
 
-    Use the number in international format without a leading `+` or `00`, like so: `385911234567`. The agent will call the `send` tool with the itinerary and the verified phone number. It will confirm the result only after the tool call succeeds.
+    Use the number in international format without a leading `+` or `00`. The agent will call the `send` tool with the itinerary and the verified phone number. It will confirm the result only after the tool call succeeds.
 
     Because Spring AI debug logging is enabled, the application logs show the MCP tool call: look for the `send` tool name and its arguments (recipient, sender, and message text) under the `org.springframework.ai` logger. Once you see it, check your phone for the Viber message.
 
