@@ -68,7 +68,7 @@ curl -i -X POST http://localhost:8080/api/chat \
 
 Then ask it to send the itinerary to a verified phone number, passing back the same
 `X-Conversation-Id` so the agent remembers the itinerary it just created. Use the number
-in international format without a leading `+` (for example, `385911234567`):
+in international format without a leading `+` or `00`.
 
 ```bash
 curl -X POST http://localhost:8080/api/chat \
